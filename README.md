@@ -47,7 +47,7 @@ angular2-seed/
  │   │   └──traceur-runtime.min.js    * ignore this file. This is needed to polyfill the browser to for ES6 features to similarly
  │   ├──favicon.ico                   * replace me with your own favicon.ico
  │   └──index.html                    * Index.html: where we place our script tags
-│
+ │
  ├──typings/                          * where tsd defines it's types definitions
  │   ├──pacbio/                       * where we define our custom types
  │   │   ├──angular2.d.ts             * where we patch angular2 types with our own types until it's fixed
@@ -89,8 +89,6 @@ Once you have those, you should install these globals with `npm install -global`
 * 
 
 ## Installing
-* `fork` this repo
-* `clone` your fork
 * `npm install` to install all dependencies
 * 
 
