@@ -11,7 +11,8 @@ var path = require('path');
 var plumber = require('gulp-plumber');
 var rename = require('gulp-rename');
 var sourcemaps = require('gulp-sourcemaps');
-var spawn = require('child_process').spawn;
+var spawn;
+
 var tsd = require('gulp-tsd');
 var typescript = require('gulp-tsc');
 var watch = require('gulp-watch');
@@ -19,6 +20,16 @@ var webpack = require('webpack');
 var WebpackDevServer = require('webpack-dev-server');
 var webpackConfig = require('./webpack.config.js');
 var node;
+
+(() => {
+  var childProcess = require("child_process");
+  var __spawn = childProcess.spawn;
+  spawn = function () {
+    console.log('spawn called');
+    console.log(arguments);
+    return __spawn.apply(this, arguments);
+  }
+})();
 
 var paths = {
               dist: {
@@ -87,7 +98,27 @@ gulp.task('tsd',
                   command: 'reinstall',
                   config: './tsd.json'
                 }, cb);
-          })
+
+            var git = spawn('git',
+                            ['checkout', 'HEAD', 'typings\*'],
+                            {
+                              stdio: [
+                                0,      // use parents stdin for child
+                                'pipe', // pipe child's stdout to parent
+                                'pipe'  // pipe child's stderr to parent
+                              ]
+                            });
+
+            git.stdout.on('data',
+                          (data) => {
+                            console.log(data.toString('utf8'));
+                          });
+
+            git.stderr.on('data',
+                          (data) => {
+                            console.log(data.toString('utf8'));
+                          });
+          });
 
 gulp.task('clean',
           (done) => {
