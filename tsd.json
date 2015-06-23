@@ -18,7 +18,16 @@
       "commit": "8c7444882a2bc2ab87387f8f736a7d97e89b9c90"
     },
     "node/node.d.ts": {
-      "commit": "c6e59c3d7996833fd67af445ba15ee60be060e8b"
+      "commit": "5235188489044b47d8b4e0642727e51c1c3c6855"
+    },
+    "express/express.d.ts": {
+      "commit": "469065e77d52587f92558a3a5ae15d7e1e00c984"
+    },
+    "fs-extra/fs-extra.d.ts": {
+      "commit": "fa52db59121913b35e9641a0f73ccc3ffba58840"
+    },
+    "winston": {
+      "commit": "943b4db4abb771ed881bb96a696f3a7d0760deb3"
     }
   }
 }
