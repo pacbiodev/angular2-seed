@@ -28,6 +28,15 @@
     },
     "mime/mime.d.ts": {
       "commit": "813035a67ff6e52846da23f58fe4739cecc60161"
+    },
+    "winston/winston.d.ts": {
+      "commit": "6387999eb899d0ba02d37dd8697647718caca230"
+    },
+    "serve-static/serve-static.d.ts": {
+      "commit": "6387999eb899d0ba02d37dd8697647718caca230"
+    },
+    "whatwg-fetch/whatwg-fetch.d.ts": {
+      "commit": "6387999eb899d0ba02d37dd8697647718caca230"
     }
   }
 }
