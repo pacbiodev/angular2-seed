@@ -1,9 +1,6 @@
-This repo serves as an extremely minimal starter for PacBio clients running with Angular 2 and TypeScript.
+This repo serves as an extremely minimal starter for PacBio client applications running with Angular 2 and TypeScript.
 * Best practice in file organization for Angular 2.
-* Ready to go build system using Webpack for working with TypeScript.
-
-### Quick start
-> Clone/Download the repo then edit `app.ts` inside [`/src/app/components/app.ts`](/src/app/components/app.ts)
+* Hot build system using Webpack for working with TypeScript.
 
 ```bash
 $ npm start # then open your browser and go to http://localhost:8080
@@ -14,68 +11,112 @@ $ npm start # then open your browser and go to http://localhost:8080
 We use the component approach.
 ```
 angular2-seed/
- ├──src/                              * our source files that will be compiled to javascript
- │   ├──app/                          * WebApp folder
- │   │   ├──bootstrap.ts              * entry file for app
+ ├──src/                                  * our source files that will be compiled to javascript
+ │   ├──app/                              * WebApp folder
+ │   │   ├──bootstrap.ts                  * entry file for app
  │   │   │
- │   │   ├──components/               * where most of components live
- │   │   │   ├──run.ts               * an example of a component using a service and forms
- │   │   │   ├──dashboard.ts          * a simple Component with a simple Directive example
+ │   │   ├──config/                       * where application config files live
+ |   │   │   ├──keystore                  * where application keys live
+ │   │   │   │   └──public.pem            * public key used to decode a JWT
  │   │   │   │
- │   │   │   ├──home/                 * example component as a folder
- │   │   │   │   ├──home.ts           * how you would require your template and style files
- │   │   │   │   ├──home.css          * simple css file for home styles
- │   │   │   │   └──home.html         * simple html file for home template
- │   │   │   │
- |   │   │   └──app.ts                * App.ts: entry file for components
+ │   │   │   └──app.yml                   * global settings for the application
+ │   │   │   ├──api.yml                   * settings for the api (RESTful endpoints) server
+ |   │   │   └──spa.yml                   * settings for the spa (Angular2) server
  │   │   │
- │   │   ├──services/                 * where we keep our services used throughout our app
- │   │   │   ├──RunService.ts         * an example of a simple service 
- │   │   │   └──services.ts           * where we gather our injectables from our services
+ │   │   ├──extensions/                   * where system extension files live
+ │   │   │   └──includes                  * where system extension javascript files live
+ │   │   │   │   ├──object.js             * adds proxy methods to Object extension class to the native Object class
+ │   │   │   │   └──string.js             * adds proxy methods to String extension class to the native String class
+ │   │   │   |
+ │   │   │   ├──extensions.ts             * Implementations of extensions to native classes
+ |   │   │   └──md5.ts                    * MD5 helper module
  │   │   │
- │   │   └──directives/               * where we keep our directives used throughout our app
- │   │       ├──Autofocus.ts          * another simple directive to fix a problem with the router
- │   │       └──directives.ts         * where we gather our directives from our directives
- │   │
- │   └──common/                       * where common files used throughout our app
- │       ├──shadowDomInjectables.ts   * determind if the user is on chrome and use ShadowDom
- │       ├──jitInjectables.ts         * turn on Just-In-Time Change Detection
- │       ├──formInjectables.ts        * services exported by angular/forms which is the FormBuilder
- │       └──BrowserDomAdapter.ts      * ignore this. we need to set the DomAdapter to the browser
- ├──public/                           * static assets are served here
- │   ├──lib/                          * static libraries
- │   │   └──traceur-runtime.min.js    * ignore this file. This is needed to polyfill the browser to for ES6 features to similarly
- │   ├──favicon.ico                   * replace me with your own favicon.ico
- │   └──index.html                    * Index.html: where we place our script tags
+ │   │   ├──server/                       * where the server classes live
+ │   │   │   ├──api.ts                    * server class for the api (RESTful endpoints) server 
+ │   │   │   └──spa.ts                    * server class for the spa (Angular2) server
+ │   │   │
+ │   │   ├──spa/                          * where the spa files live
+ │   │   │   ├──app                       *  
+ │   │   │   │   ├──components/           * where most of components live
+ │   │   │   │   │   ├──app               * where the appication component lives
+ │   │   │   │   │   │   ├──app.ts        * application main component source
+ │   │   │   │   │   │   ├──app.css       * simple css file for component styles
+ │   │   │   │   │   │   └──app.html      * simple html file for component template
+ │   │   │   │   │   │
+ │   │   │   │   │   ├──home/             * where the main landing component lives
+ │   │   │   │   │   │   ├──home.ts       * main landing component source
+ │   │   │   │   │   │   ├──home.css      * simple css file for component styles
+ │   │   │   |   │   │   └──home.html     * simple html file for component template
+ │   │   │   │   │   │
+ │   │   │   │   │   ├──login/            * where the login component lives
+ │   │   │   │   │   │   ├──login.ts      * how you would require your template and style files
+ │   │   │   │   │   │   ├──login.css     * simple css file for component styles
+ │   │   │   │   │   │   └──login.html    * simple html file for component template
+ │   │   │   │   │   │
+ │   │   │   │   │   ├──dashboard.ts      * dashboard component (sample)
+ │   │   │   │   │   └──run.ts            * run edit component using a service and forms (sample)
+ │   │   │   │   │
+ │   │   │   │   ├──directives/           * where application directives live
+ │   │   │   │   │   ├──Autofocus.ts      * simple directive to set focus to the first control in the view
+ │   │   │   │   │   ├──LoggedInOutlet.ts * directive to enforce login when accessing non public views
+ │   │   │   │   │   ├──XLarge.ts         * simple directive to set text to a larger size
+ │   │   │   │   │   └──directives.ts     * a simple way to include all directives
+ │   │   │   │   │
+ │   │   │   │   ├──services/             * where application services live
+ │   │   │   │   │   ├──RunService.ts     * a service to add runs (sample) 
+ │   │   │   │   │   ├──Store.ts          * base service class to manage in-memory list (sample)
+ │   │   │   │   │   └──services.ts       * a simple way to include all injectable services
+ │   │   │   │   |   
+ │   │   │   │   └──bootstrap.ts          * bootstraps the application component
+ │   │   │   |
+ |   │   │   ├──common                    *  
+ │   │   │   │   ├──BrowserDomAdapter.ts  * 
+ │   │   │   │   ├──fetch.ts              * 
+ │   │   │   │   ├──formInjectables       * 
+ │   │   │   │   ├──jitInjectables        * 
+ │   │   │   │   └──shadowDomInjectables  * 
+ │   │   │   |
+ │   │   │   └──public                    * static content is served here
+ │   │   │       ├──css                   * where site wide css files live
+ │   │   │       ├──img                   * where site wide image files live
+ │   │   │       ├──favicon.ico           * SPA site icon
+ │   │   │       └──index.html            * Index.html: Main page for SPA
+ │   │   │    
+ │   │   ├──strings                       *
+ |   |   |   └──en-us                     *
+ |   |   |       └──error.strings         *
+ │   │   │    
+ |   |   ├──error.ts                      *
+ │   │   └──strings.js                    * 
  │
- ├──typings/                          * where tsd defines it's types definitions
- │   ├──pacbio/                       * where we define our custom types
- │   │   ├──angular2.d.ts             * where we patch angular2 types with our own types until it's fixed
- │   │   └──pacbio.d.ts               * we include all of our custom types here
- │   │
+ ├──typings/                              * where typescript type definitions live
  │   ├──angular2/
- │   │   └──angular2.d.ts             * our Angular 2 type definitions
+ │   │   └──angular2.d.ts                 * our Angular 2 type definitions
  │   │
  │   ├──es6-promise/
- │   │   └──es6-promise.d.ts          * ES6 promises type definitions
+ │   │   └──es6-promise.d.ts              * ES6 promises type definitions
  │   │
  │   ├──rx/
- │   │   ├──rx-lite.d.ts              * rx-lite type definitions
- │   │   └──rx.d.ts                   * rx type definitions
+ │   │   ├──rx-lite.d.ts                  * rx-lite type definitions
+ │   │   └──rx.d.ts                       * rx type definitions
+ │   │
+ │   ├──json-fn/
+ │   │   └──json-fn.d.ts                  * json-fn type definitions
  │   │
  │   ├──pacbio/
- │   │   ├──angular-pacbio.d.ts       * Missing angular type definitions
- │   │   ├──jwt-decode.d.ts           * JWT type definitions
- │   │   ├──lib-pacbio.d.ts           * Missing lib type definitions
- │   │   ├──pacbio.d.ts               * Includes for all custom type definitions
- │   │   └──webpack.d.ts              * WebPack type definitions
+ │   │   ├──angular-pacbio.d.ts           * missing angular type definitions
+ │   │   ├──jwt-decode.d.ts               * jwt type definitions
+ │   │   ├──lib-pacbio.d.ts               * missing lib type definitions
+ │   │   ├──pacbio.d.ts                   * includes for all custom type definitions
+ │   │   └──webpack.d.ts                  * webpack type definitions
  │   │
- │   └──tsd.d.ts.ts                   * our main file for all of our type definitions
+ │   └──tsd.d.ts                          * our main file for all of our type definitions
  │
- ├──tsconfig.json                     * config that webpack uses for typescript
- ├──tsd.json                          * config that tsd uses for managing it's definitions
- ├──package.json                      * what npm uses to manage it's dependencies
- └──webpack.config.js                 * our webpack config
+ ├──gulpfile.ts                           * config that webpack uses for typescript
+ ├──tsconfig.json                         * config that webpack uses for typescript
+ ├──tsd.json                              * config that tsd uses for managing it's definitions
+ ├──package.json                          * what npm uses to manage it's dependencies
+ └──webpack.config.js                     * our webpack config
 ```
 
 # Getting Started
