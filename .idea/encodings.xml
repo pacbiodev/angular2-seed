@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/gulpfile.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/spa/app/bootstrap.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/spa/app/components/app/app.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/spa/app/components/dashboard.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/spa/app/components/home/home.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/spa/app/components/run.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/spa/app/directives/Autofocus.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/spa/app/directives/XLarge.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/spa/app/directives/directives.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/spa/app/services/RunService.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/spa/app/services/Store.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/spa/app/services/services.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/spa/common/BrowserDomAdapter.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/spa/common/formInjectables.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/spa/common/jitInjectables.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/spa/common/shadowDomInjectables.ts" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tsconfig.json" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tsd.json" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/webpack.config.js" charset="UTF-8" />
+  </component>
+</project>

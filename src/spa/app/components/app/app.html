@@ -1,0 +1,30 @@
+<nav class="navbar navbar-fixed-top">
+    <div class="container-fluid container-nav">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <div class="navbar-header">
+                <a class="navbar-brand" router-link="home">
+                    <img alt="PacBio" src="/img/pacbio_logo.png">
+                </a>
+            </div>
+        </div>
+        <div class="navbar-inner"> <!-- collapse navbar-collapse -->
+            <ul class="nav navbar-nav">
+                <li><a router-link="home">Home</a></li>
+                <li><a router-link="dashboard">Dashboard</a></li>
+                <li><a router-link="run">Run Editor</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<h1 class="title">{{ name }}</h1>
+<main>
+    <router-outlet></router-outlet>
+</main>
