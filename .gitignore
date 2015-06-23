@@ -36,5 +36,6 @@ angular2
 es6-promise
 express
 fs-extra
+mime
+node
 rx
-winston

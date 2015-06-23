@@ -26,8 +26,8 @@
     "fs-extra/fs-extra.d.ts": {
       "commit": "fa52db59121913b35e9641a0f73ccc3ffba58840"
     },
-    "winston": {
-      "commit": "943b4db4abb771ed881bb96a696f3a7d0760deb3"
+    "mime/mime.d.ts": {
+      "commit": "813035a67ff6e52846da23f58fe4739cecc60161"
     }
   }
 }
