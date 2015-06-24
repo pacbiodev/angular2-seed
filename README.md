@@ -24,7 +24,7 @@ angular2-seed/
  |   │   │   └──spa.yml                   * settings for the spa (Angular2) server
  │   │   │
  │   │   ├──extensions/                   * where system extension files live
- │   │   │   ├──includes                  * where system extension javascript files live
+ │   │   │   ├──includes/                 * where system extension javascript files live
  │   │   │   │   ├──object.js             * adds proxy methods to Object extension class to the native Object class
  │   │   │   │   └──string.js             * adds proxy methods to String extension class to the native String class
  │   │   │   |
@@ -36,9 +36,9 @@ angular2-seed/
  │   │   │   └──spa.ts                    * server class for the spa (Angular2) server
  │   │   │
  │   │   ├──spa/                          * where the spa files live
- │   │   │   ├──app                       *  
+ │   │   │   ├──app/                      *  
  │   │   │   │   ├──components/           * where most of components live
- │   │   │   │   │   ├──app               * where the appication component lives
+ │   │   │   │   │   ├──app/              * where the appication component lives
  │   │   │   │   │   │   ├──app.ts        * application main component source
  │   │   │   │   │   │   ├──app.css       * simple css file for component styles
  │   │   │   │   │   │   └──app.html      * simple html file for component template
@@ -69,21 +69,21 @@ angular2-seed/
  │   │   │   │   |   
  │   │   │   │   └──bootstrap.ts          * bootstraps the application component
  │   │   │   |
- |   │   │   ├──common                    *  
+ |   │   │   ├──common/                   *  
  │   │   │   │   ├──BrowserDomAdapter.ts  * 
  │   │   │   │   ├──fetch.ts              * 
  │   │   │   │   ├──formInjectables       * 
  │   │   │   │   ├──jitInjectables        * 
  │   │   │   │   └──shadowDomInjectables  * 
  │   │   │   |
- │   │   │   └──public                    * static content is served here
- │   │   │       ├──css                   * where site wide css files live
- │   │   │       ├──img                   * where site wide image files live
+ │   │   │   └──public/                   * static content is served here
+ │   │   │       ├──css/                  * where site wide css files live
+ │   │   │       ├──img/                  * where site wide image files live
  │   │   │       ├──favicon.ico           * SPA site icon
  │   │   │       └──index.html            * Index.html: Main page for SPA
  │   │   │    
- │   │   ├──strings                       *
- |   |   |   └──en-us                     *
+ │   │   ├──strings/                      *
+ |   |   |   └──en-us/                    *
  |   |   |       └──error.strings         *
  │   │   │    
  |   |   ├──error.ts                      *
