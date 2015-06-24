@@ -100,7 +100,7 @@ gulp.task('tsd',
                 }, cb);
 
             var git = spawn('git',
-                            ['checkout', 'HEAD', 'typings\*'],
+                            ['checkout', 'HEAD', 'typings\\*'],
                             {
                               stdio: [
                                 0,      // use parents stdin for child
@@ -118,6 +118,8 @@ gulp.task('tsd',
                           (data) => {
                             console.log(data.toString('utf8'));
                           });
+
+            process.exit(0);
           });
 
 gulp.task('clean',
