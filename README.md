@@ -24,7 +24,7 @@ angular2-seed/
  |   │   │   └──spa.yml                   * settings for the spa (Angular2) server
  │   │   │
  │   │   ├──extensions/                   * where system extension files live
- │   │   │   └──includes                  * where system extension javascript files live
+ │   │   │   ├──includes                  * where system extension javascript files live
  │   │   │   │   ├──object.js             * adds proxy methods to Object extension class to the native Object class
  │   │   │   │   └──string.js             * adds proxy methods to String extension class to the native String class
  │   │   │   |
