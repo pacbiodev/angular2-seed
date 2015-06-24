@@ -94,32 +94,46 @@ var paths = {
 
 gulp.task('tsd', 
           (cb) => {
+            var watchSpec = path.resolve('./', 'typings/tsd.d.ts');
+            console.log(watchSpec);
+            gulp.watch(watchSpec,
+                       () => {
+                         console.log('Refreshing checked in typings');
+                         var git = spawn('git',
+                           ['checkout', 'HEAD', 'typings\\*'],
+                           {
+                             stdio: [
+                               0,      // use parents stdin for child
+                               'pipe', // pipe child's stdout to parent
+                               'pipe'  // pipe child's stderr to parent
+                             ]
+                           });
+
+                         git.stdout
+                           .on('data',
+                           (data) => {
+                             console.log(data.toString('utf8'));
+                           });
+
+                         git.stderr
+                           .on('data',
+                           (data) => {
+                             console.log(data.toString('utf8'));
+                           });
+
+                         git.on('close',
+                                () => {
+                                  cb();
+                                  process.exit(0);
+                                });
+                       });
+
             tsd({
                   command: 'reinstall',
                   config: './tsd.json'
-                }, cb);
-
-            var git = spawn('git',
-                            ['checkout', 'HEAD', 'typings\\*'],
-                            {
-                              stdio: [
-                                0,      // use parents stdin for child
-                                'pipe', // pipe child's stdout to parent
-                                'pipe'  // pipe child's stderr to parent
-                              ]
-                            });
-
-            git.stdout.on('data',
-                          (data) => {
-                            console.log(data.toString('utf8'));
-                          });
-
-            git.stderr.on('data',
-                          (data) => {
-                            console.log(data.toString('utf8'));
-                          });
-
-            process.exit(0);
+                },
+                () => {
+                });
           });
 
 gulp.task('clean',
