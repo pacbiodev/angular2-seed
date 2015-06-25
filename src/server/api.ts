@@ -24,6 +24,7 @@ app.use(BodyParser.json());
 app.use(MethodOverride('X-HTTP-Method-Override'));
 
 // view engine setup
+app.set('views', Path.resolve(__dirname, '../api/views'));
 app.set('view engine', 'hbs');
 
 app.all('/*',
@@ -51,6 +52,7 @@ app.get('/api',
 
         });
 
+app.use(FavIcon(Path.resolve(__dirname, '../api/img/favicon.png')));
 app.use(Express.static(Path.resolve(__dirname, '../api')));
 
 // Root will redirect to the API page. All other request to paths not

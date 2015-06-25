@@ -19,7 +19,7 @@ var watch = require('gulp-watch');
 var webpack = require('webpack');
 var WebpackDevServer = require('webpack-dev-server');
 var webpackConfig = require('./webpack.config.js');
-var node;
+var api, spa;
 
 (() => {
   var childProcess = require("child_process");
@@ -33,70 +33,59 @@ var node;
 
 var paths = {
               dist: {
-                      common: {
-                                root: 'dist/',
-                                extensions: 'dist/extensions'
-                              },
-                      server: 'dist/server',
-                      api: 'dist/api',
-                      spa: 'dist/spa'
+                      root: 'dist/',
+                      server: 'dist/',
+                      spa: 'dist/spa/'
                     },
               src: {
                      root: 'src',
-                     common: {
-                               root: {
-                                 js: ['./src/*.js'],
-                                 ts: ['./src/*.ts'],
-                                 files: [
-                                          './src/**/*.strings',
-                                          './src/**/*.{yml,pem}'
-                                        ]
-                               },
-                               extensions: {
-                                             js: ['./src/extensions/**/*.js'],
-                                             ts: ['./src/extensions/**/*.ts'],
-                                             files: []
-                                           }
-                             },
-                      api: {
-                             js: ['./src/api/**/*.js'],
-                             ts: ['./src/api/**/*.ts'],
-                             files: [
-                                      './src/api/**/*.{css,woff}',
-                                      './src/api/**/*.html',
-                                      './src/api/**/*.hbs',
-                                      './src/api/**/*.{png,gif,jpeg,jpg,ico}'
-                                    ],
-                             server: ['./src/server/api.ts'],
-                           },
-
-                     spa: {
-                            lib: [
-                                   './bower_components/bootstrap/dist/css/bootstrap.css',
-                                   './bower_components/traceur-runtime/traceur-runtime.js',
-                                   './bower_components/fetch/fetch.js',
-                                   './bower_components/jwt-decode/build/jwt-decode.js'
-                                 ],
-                            js: [
-                                  './src/spa/**/*.js'
-                                ],
-                            ts: ['./src/spa/app/**/*.{ts,css,html}'],
-                            files: [
-                                     './src/spa/**/public/**/*.{css,woff}',
-                                     './src/spa/**/public/**/*.{html,htm,txt}',
-                                     './src/spa/**/public/**/*.hbs',
-                                     './src/spa/**/public/**/*.{png,gif,jpeg,jpg,ico}'
+                     server: {
+                               js: [
+                                     './src/**/*.js',
+                                     '!./src/spa/**/*.js'
                                    ],
-                            server: ['./src/server/spa.ts']
-                          }
+                               ts: [
+                                     './src/**/*.ts',
+                                     '!./src/spa/**/*.ts'
+                                   ],
+                               files: [
+                                        './src/**/*.{yml,pem}',
+                                        '!./src/spa/**/*.{yml,pem}',
+                                        './src/**/*.strings',
+                                        '!./src/spa/**/*.strings',
+                                        './src/**/*.{css,woff}',
+                                        '!./src/spa/**/*.{css,woff}',
+                                        './src/**/*.{html,htm,txt}',
+                                        '!./src/spa/**/*.{html,htm,txt}',
+                                        './src/**/*.hbs',
+                                        '!./src/spa/**/*.hbs',
+                                        './src/**/*.{png,gif,jpeg,jpg,ico}',
+                                        '!./src/spa/**/*.{png,gif,jpeg,jpg,ico}'
+                                      ]
+                             },
+                     spa: {
+                       lib: [
+                              './bower_components/bootstrap/dist/css/bootstrap.css',
+                              './bower_components/traceur-runtime/traceur-runtime.js',
+                              './bower_components/fetch/fetch.js',
+                              './bower_components/jwt-decode/build/jwt-decode.js'
+                            ],
+                       app: [
+                              './src/spa/**/*'
+                            ],
+                       files: [
+                                './src/spa/**/public/**/*.strings',
+                                './src/spa/**/public/**/*.{css,woff}',
+                                './src/spa/**/public/**/*.{html,htm,txt}',
+                                './src/spa/**/public/**/*.{png,gif,jpeg,jpg,ico}'
+                              ]
+                     }
                    }
             };
 
 gulp.task('tsd', 
           (cb) => {
-            var watchSpec = path.resolve('./', 'typings/tsd.d.ts');
-            console.log(watchSpec);
-            gulp.watch(watchSpec,
+            gulp.watch(path.resolve('./', 'typings/tsd.d.ts'),
                        () => {
                          console.log('Refreshing checked in typings');
                          var git = spawn('git',
@@ -138,43 +127,26 @@ gulp.task('tsd',
 
 gulp.task('clean',
           (done) => {
-            del([paths.dist.common.root], done);
+            del([paths.dist.root], done);
           });
 
+gulp.task('server', ['server:js', 'server:ts', 'server:files']);
 
-gulp.task('common:files',
+gulp.task('server:files',
           () => {
-            gulp.src(paths.src.common.root.files)
-                .pipe(gulp.dest(paths.dist.common.root));
-
-            return gulp.src(paths.src.common.extensions.files)
-                       .pipe(gulp.dest(paths.dist.common.extensions));
+            return gulp.src(paths.src.server.files)
+                       .pipe(gulp.dest(paths.dist.root));
           });
 
-gulp.task('common', ['common:js', 'common:ts', 'common:files']);
-
-gulp.task('common:js',
+gulp.task('server:js',
           () => {
-            gulp.src(paths.src.common.root.js)
-                .pipe(gulp.dest(paths.dist.common.root));
-            return gulp.src(paths.src.common.extensions.js)
-                       .pipe(gulp.dest(paths.dist.common.extensions));
+            return gulp.src(paths.src.server.js)
+                       .pipe(gulp.dest(paths.dist.root));
           });
 
-gulp.task('common:ts',
+gulp.task('server:ts',
           () => {
-            gulp.src(paths.src.common.root.ts)
-                          .pipe(rename({ extname: '' })) // hack, see: https://github.com/sindresorhus/gulp-traceur/issues/54
-                          .pipe(plumber())
-                          .pipe(sourcemaps.init())
-                          .pipe(typescript({ module: 'commonjs',
-                                             sourceMap: true,
-                                             target: 'ES5' }))
-                          .pipe(sourcemaps.write('.',
-                                                 { sourceRoot: paths.src.root }))
-                          .pipe(gulp.dest(paths.dist.common.root));
-
-            return gulp.src(paths.src.common.extensions.ts)
+            return gulp.src(paths.src.server.ts)
                        .pipe(rename({ extname: '' })) // hack, see: https://github.com/sindresorhus/gulp-traceur/issues/54
                        .pipe(plumber())
                        .pipe(sourcemaps.init())
@@ -183,19 +155,16 @@ gulp.task('common:ts',
                                           target: 'ES5' }))
                        .pipe(sourcemaps.write('.',
                                               { sourceRoot: paths.src.root }))
-                       .pipe(gulp.dest(paths.dist.common.extensions));
+                       .pipe(gulp.dest(paths.dist.server));
           });
 
 gulp.task('spa:clean',
           (done) => {
-              del([paths.dist.spa], done);
+            del([paths.dist.spa], done);
           });
 
 gulp.task('spa',
-          ['spa:lib', 'spa:js', 'spa:files', 'spa:watch-dev'],
-          () => {
-
-          });
+          ['spa:lib', 'spa:files', 'spa:watch-dev']);
 
 gulp.task('spa:lib', 
           ['spa:bower'], 
@@ -203,12 +172,8 @@ gulp.task('spa:lib',
             var libPath = path.resolve(paths.dist.spa, 'public/lib');
             util.log('lib path: %s', libPath);
             
-            return gulp.src(paths.src.spa.lib)
-                       //.pipe(require('gulp-size')({
-                       //                             showFiles: true,
-                       //                             gzip: true 
-                       //                           }))
-                       .pipe(gulp.dest(libPath));
+            gulp.src(paths.src.spa.lib)
+                .pipe(gulp.dest(libPath));
           });
 
 gulp.task('spa:bower', 
@@ -226,54 +191,17 @@ gulp.task('spa:bower',
                    });
           });
 
-gulp.task('spa:server',
-          ['common'],
-          () => {
-            return gulp.src(paths.src.spa.server)
-                       .pipe(rename({ extname: '' })) // hack, see: https://github.com/sindresorhus/gulp-traceur/issues/54
-                       .pipe(plumber())
-                       .pipe(sourcemaps.init())
-                       .pipe(typescript({ module: 'commonjs',
-                                          sourceMap: true,
-                                          target: 'ES5' }))
-                       .pipe(sourcemaps.write('.',
-                                              { sourceRoot: paths.src.root }))
-                       .pipe(gulp.dest(paths.dist.server));
-          });
-
-gulp.task('spa:js', 
-          () => {
-              return gulp.src(paths.src.spa.js)
-                         .pipe(gulp.dest(paths.dist.spa));
-          });
-
-gulp.task('spa:ts',
-          () => {
-            return gulp.src(paths.src.spa.ts)
-                       .pipe(rename({ extname: '' })) // hack, see: https://github.com/sindresorhus/gulp-traceur/issues/54
-                       .pipe(plumber())
-                       .pipe(sourcemaps.init())
-                       .pipe(typescript({ module: 'commonjs',
-                                          sourceMap: true,
-                                          target: 'ES5' }))
-                       .pipe(sourcemaps.write('.',
-                                              { sourceRoot: paths.src.root }))
-                       .pipe(gulp.dest(paths.dist.common));
-          });
-
-gulp.task('spa:files', 
-          () => {
-              return gulp.src(paths.src.spa.files)
-                         .pipe(gulp.dest(paths.dist.spa));
-          });
-
 // Dev build
 gulp.task('spa:watch-dev',
           ['spa:build-dev'],
           () => {
-            gulp.watch(paths.src.spa.js, ['spa:js']);
-            gulp.watch(paths.src.spa.files,['spa:files']);
-            gulp.watch(paths.src.spa.ts,['spa:build-dev']);
+            gulp.watch(paths.src.spa.app,['spa:build-dev']);
+          });
+
+gulp.task('spa:files',
+          () => {
+            return gulp.src(paths.src.spa.files)
+                       .pipe(gulp.dest(paths.dist.spa));
           });
 
 gulp.task('spa:build-dev',
@@ -296,69 +224,10 @@ gulp.task('spa:build-dev',
                                    });
           });
 
-gulp.task('spa:serve-dev',
-          (callback) => {
-            // modify some webpack config options
-            var config = Object.create(webpackConfig);
-            config.devtool = 'eval';
-            config.debug = true;
-
-            // Start a webpack-dev-server
-            new WebpackDevServer(webpack(config),
-                                 {
-                                    contentBase: 'dist/spa/public',
-                                    publicPath: '/bin',
-                                    stats: {
-                                             colors: true
-                                           }
-                                 }).listen(8080,
-                                           'localhost',
-                                           (err) => {
-                                             if (err)
-                                               throw new util.PluginError('webpack-dev-server', err);
-
-                                             util.log('[webpack-dev-server]',
-                                                      'http://localhost:8080/index.html');
-                                           });
-          });
-
 gulp.task('spa:node-dev',
           () => {
             process.env.NODE_ENV = 'development';
             gulp.start('spa:node');
-          });
-
-gulp.task('spa:node-prod',
-          () => {
-            process.env.NODE_ENV = 'production';
-            gulp.start('spa:node');
-          });
-
-gulp.task('spa:node',
-          ['spa:server'],
-          (cb) => {
-            if (node)
-              node.kill();
-
-            node = spawn('node',
-                         ['dist/server/spa.js'],
-                         {
-                           stdio: [
-                                    0,      // use parents stdin for child
-                                    'pipe', // pipe child's stdout to parent
-                                    'pipe'  // pipe child's stderr to parent
-                                  ]
-                         });
-
-            node.stdout.on('data', 
-                           (data) => {
-                             console.log(data.toString('utf8'));
-                           });
-
-            node.stderr.on('data', 
-                           (data) => {
-                             console.log(data.toString('utf8'));
-                           });
           });
 
 // Production build
@@ -367,14 +236,14 @@ gulp.task('spa:build-prod',
             // modify some webpack config options
             var config = Object.create(webpackConfig);
             config.plugins = config.plugins
-                                   .concat(new webpack.DefinePlugin({
-                                                                      'process.env': {
-                                                                                       // This has effect on the react lib size
-                                                                                       'NODE_ENV': JSON.stringify('production')
-                                                                                     }
-                                                                    }),
-                                           new webpack.optimize.DedupePlugin(),
-                                           new webpack.optimize.UglifyJsPlugin());
+                  .concat(new webpack.DefinePlugin({
+                                                     'process.env': {
+                                                       // This has effect on the react lib size
+                                                       'NODE_ENV': JSON.stringify('production')
+                                                     }
+                                                   }),
+                                                   new webpack.optimize.DedupePlugin(),
+                                                   new webpack.optimize.UglifyJsPlugin());
 
             // run webpack
             webpack(config,
@@ -390,85 +259,102 @@ gulp.task('spa:build-prod',
                     });
           });
 
-gulp.task('api:clean',
-          (done) => {
-              del([paths.dist.api], done);
+gulp.task('spa:node-prod',
+          () => {
+            process.env.NODE_ENV = 'production';
+            gulp.start('spa:node');
+          });
+
+// Build and launch SPA server
+gulp.task('spa:node',
+          (cb) => {
+            if (spa)
+              spa.kill();
+
+            spa = spawn('node',
+                        ['dist/server/spa.js'],
+                        {
+                          stdio: [
+                                   0,      // use parents stdin for child
+                                   'pipe', // pipe child's stdout to parent
+                                   'pipe'  // pipe child's stderr to parent
+                                 ]
+                        });
+
+            spa.stdout
+               .on('data',
+                   (data) => {
+                     console.log(data.toString('utf8'));
+                   });
+
+            spa.stderr
+               .on('data',
+                   (data) => {
+                     console.log(data.toString('utf8'));
+                   });
           });
 
 gulp.task('api',
-          ['api:js', 'api:ts', 'api:files', 'api:watch-dev'],
-          () => {
+          ['server:js', 'server:ts', 'server:files', 'server:watch-dev']);
 
+gulp.task('api:node-dev',
+          () => {
+            process.env.NODE_ENV = 'development';
+            gulp.start('api:node');
           });
 
-gulp.task('api:ts', 
+gulp.task('api:node-prod',
           () => {
-              return gulp.src(paths.src.api.ts)
-                         .pipe(rename({ extname: '' })) // hack, see: https://github.com/sindresorhus/gulp-traceur/issues/54
-                         .pipe(plumber())
-                         .pipe(sourcemaps.init())
-                         .pipe(typescript({ module: 'commonjs',
-                                            sourceMap: true,
-                                            target: 'ES5' }))
-                         .pipe(sourcemaps.write('.', 
-                                                { sourceRoot: paths.src.root }))
-                         .pipe(gulp.dest(paths.dist.api));
+            process.env.NODE_ENV = 'production';
+            gulp.start('api:node');
           });
 
-gulp.task('api:js',
-          () => {
-              return gulp.src(paths.src.api.js)
-                         .pipe(gulp.dest(paths.dist.api));
-          });
+// Build and launch API server
+gulp.task('api:node',
+          (cb) => {
+            if (api)
+              api.kill();
 
-gulp.task('api:server',
-          ['common'],
-          () => {
-            return gulp.src(paths.src.api.server)
-                       .pipe(rename({ extname: '' })) // hack, see: https://github.com/sindresorhus/gulp-traceur/issues/54
-                       .pipe(plumber())
-                       .pipe(sourcemaps.init())
-                       .pipe(typescript({ module: 'commonjs',
-                                          sourceMap: true,
-                                          target: 'ES5' }))
-                       .pipe(sourcemaps.write('.',
-                                              { sourceRoot: paths.src.root }))
-                       .pipe(gulp.dest(paths.dist.server));
-          });
+            api = spawn('node',
+                        ['--debug=45892', 'dist/server/api.js'],
+                        {
+                          stdio: [
+                                   0,      // use parents stdin for child
+                                   'pipe', // pipe child's stdout to parent
+                                   'pipe'  // pipe child's stderr to parent
+                                 ]
+                        });
 
-gulp.task('api:files', 
-          () => {
-              return gulp.src(paths.src.api.files)
-                         .pipe(gulp.dest(paths.dist.api));
-          });
+            api.stdout
+               .on('data',
+                   (data) => {
+                     console.log(data.toString('utf8'));
+                   });
 
-gulp.task('api:watch-dev',
-          [],
-          () => {
-              watch(paths.src.api.ts,
-                    () => {
-                      gulp.start('api:ts');
-                    });
-
-              watch(paths.src.api.js,
-                    () => {
-                      gulp.start('api:js');
-                    });
-
-              watch(paths.src.api.files,
-                    () => {
-                      gulp.start('api:files');
-                    });
+            api.stderr
+               .on('data',
+                   (data) => {
+                     console.log(data.toString('utf8'));
+                   });
           });
 
 // The development server (the recommended option for development)
-gulp.task('default', ['webpack-dev-server']);
+gulp.task('default', ['server', 'spa']);
 
-// clean up if an error goes unhandled.
+/*
+process.on('SIGINT',
+           () => {
+             process.exit();
+           });
+ */
+
 process.on('exit',
            (code) => {
-             console.log('Gulp process exiting...');
+             console.log('Gulp process exiting (status: %d)', code);
 
-             if (node) 
-               node.kill()
+             if (spa)
+               spa.kill()
+
+             if (api)
+               api.kill()
            });
