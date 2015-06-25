@@ -1,19 +1,30 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
-import debug = require('winston');
-import express = require('express');
-import http = require('http');
-import path = require('path');
+import Debug = require('winston');
+import Express = require('express');
+import Http = require('http');
+import Path = require('path');
 
-export interface Express {
-  on(event: string, callback:Function);
-}
+var BodyParser = require('body-parser');
+var CookieParser = require('cookie-parser');
+var MethodOverride = require('method-override');
+var FavIcon = require('serve-favicon');
+
+// Load Strings
+import Strings = require('../Strings');
 
 // Express App
-var app = express();
+var app = Express();
 var appPort = 8081;
 
-debug.info('NODE_ENV: %s', process.env.NODE_ENV);
+Debug.info('NODE_ENV: %s', process.env.NODE_ENV);
+
+app.use(CookieParser());
+app.use(BodyParser.json());
+app.use(MethodOverride('X-HTTP-Method-Override'));
+
+// view engine setup
+app.set('view engine', 'hbs');
 
 app.all('/*',
         (req, res, next) => {
@@ -31,11 +42,26 @@ app.all('/*',
           next();
         });
 
-// Your middleware
-app.use(express.static(path.resolve(__dirname, '../api')));
+// API Documentation
+app.get('/api',
+        (req, res, next) => {
+          res.status(200)
+             .render('api',
+                     { title: Strings.messages['default-page-title'] });
+
+        });
+
+app.use(Express.static(Path.resolve(__dirname, '../api')));
+
+// Root will redirect to the API page. All other request to paths not
+// listed in the unless middleware handler for JWT will receive a 401
+// error.
+app.use((req, res) => {
+          return res.redirect('/api');
+        });
 
 app.listen(appPort,
-           (server) => {
+           function () {
              var addr = parseBindInfo(this);
              console.log('listening on %s:%d using %s...',
                          addr.address, addr.port, addr.family);

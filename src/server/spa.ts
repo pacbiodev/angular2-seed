@@ -1,19 +1,19 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
-var webpack = require('webpack');
-var config = require('../../webpack.config');
+var Webpack = require('webpack');
 var WebPackServer = require('webpack-dev-server');
+var config = require('../../webpack.config');
 
-var express = require('express');
-var path = require('path');
+var Express = require('express');
+var Path = require('path');
 
 // Express App
-var app = express();
+var app = Express();
 var appPort = 8080;
 
 console.log('NODE_ENV: %s', process.env.NODE_ENV);
 
-var server = new WebPackServer(webpack(config),
+var server = new WebPackServer(Webpack(config),
                                {
                                  path: '/spa/public/bin',
                                  contentBase: '../spa/public',
@@ -27,11 +27,11 @@ server.app
       .use(app);
 
 // Your middleware
-app.use(express.static(path.resolve(__dirname, '../spa/public')));
+app.use(Express.static(Path.resolve(__dirname, '../spa/public')));
 
 app.use((req, res) => {
           // Use response.sendfile, as it streams instead of reading the file into memory.
-          res.sendFile(path.resolve(__dirname, '../spa/public/index.html'));
+          res.sendFile(Path.resolve(__dirname, '../spa/public/index.html'));
         });
 
 server.listen(appPort,

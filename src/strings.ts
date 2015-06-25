@@ -5,8 +5,8 @@ import fs = require('fs-extra');
 import path = require('path');
 
 // Include these files
-require('./includes/object.js');
-require('./includes/string.js');
+require('./extensions/includes/object.js');
+require('./extensions/includes/string.js');
 
 export interface IStringMap {
   [key:string]:string;
