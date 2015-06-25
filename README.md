@@ -12,82 +12,79 @@ We use the component approach.
 ```
 angular2-seed/
  ├──src/                                  * our source files that will be compiled to javascript
- │   ├──app/                              * WebApp folder
- │   │   ├──bootstrap.ts                  * entry file for app
+ │   ├──config/                           * where application config files live
+ │   │   ├──keystore                      * where application keys live
+ │   │   │   └──public.pem                * public key used to decode a JWT
  │   │   │
- │   │   ├──config/                       * where application config files live
- |   │   │   ├──keystore                  * where application keys live
- │   │   │   │   └──public.pem            * public key used to decode a JWT
+ │   │   ├──app.yml                       * global settings for the application
+ │   │   ├──api.yml                       * settings for the api (RESTful endpoints) server
+ │   │   └──spa.yml                       * settings for the spa (Angular2) server
+ │   │   │
+ │   ├──extensions/                       * where system extension files live
+ │   │   ├──includes/                     * where system extension javascript files live
+ │   │   │   ├──object.js                 * adds proxy methods to Object extension class to the native Object class
+ │   │   │   └──string.js                 * adds proxy methods to String extension class to the native String class
+ │   │   |
+ │   │   ├──extensions.ts                 * Implementations of extensions to native classes
+ │   │   └──md5.ts                        * MD5 helper module
+ │   │
+ │   ├──server/                           * where the server classes live
+ │   │   ├──api.ts                        * server class for the api (RESTful endpoints) server 
+ │   │   └──spa.ts                        * server class for the spa (Angular2) server
+ │   │
+ │   ├──spa/                              * where the spa files live
+ │   │   ├──app/                          *  
+ │   │   │   ├──components/               * where most of components live
+ │   │   │   │   ├──app/                  * where the appication component lives
+ │   │   │   │   │   ├──app.ts            * application main component source
+ │   │   │   │   │   ├──app.css           * simple css file for component styles
+ │   │   │   │   │   └──app.html          * simple html file for component template
+ │   │   │   │   │
+ │   │   │   │   ├──home/                 * where the main landing component lives
+ │   │   │   │   │   ├──home.ts           * main landing component source
+ │   │   │   │   │   ├──home.css          * simple css file for component styles
+ │   │   |   │   │   └──home.html         * simple html file for component template
+ │   │   │   │   │
+ │   │   │   │   ├──login/                * where the login component lives
+ │   │   │   │   │   ├──login.ts          * how you would require your template and style files
+ │   │   │   │   │   ├──login.css         * simple css file for component styles
+ │   │   │   │   │   └──login.html        * simple html file for component template
+ │   │   │   │   │
+ │   │   │   │   ├──dashboard.ts          * dashboard component (sample)
+ │   │   │   │   └──run.ts                * run edit component using a service and forms (sample)
  │   │   │   │
- │   │   │   └──app.yml                   * global settings for the application
- │   │   │   ├──api.yml                   * settings for the api (RESTful endpoints) server
- |   │   │   └──spa.yml                   * settings for the spa (Angular2) server
- │   │   │
- │   │   ├──extensions/                   * where system extension files live
- │   │   │   ├──includes/                 * where system extension javascript files live
- │   │   │   │   ├──object.js             * adds proxy methods to Object extension class to the native Object class
- │   │   │   │   └──string.js             * adds proxy methods to String extension class to the native String class
- │   │   │   |
- │   │   │   ├──extensions.ts             * Implementations of extensions to native classes
- |   │   │   └──md5.ts                    * MD5 helper module
- │   │   │
- │   │   ├──server/                       * where the server classes live
- │   │   │   ├──api.ts                    * server class for the api (RESTful endpoints) server 
- │   │   │   └──spa.ts                    * server class for the spa (Angular2) server
- │   │   │
- │   │   ├──spa/                          * where the spa files live
- │   │   │   ├──app/                      *  
- │   │   │   │   ├──components/           * where most of components live
- │   │   │   │   │   ├──app/              * where the appication component lives
- │   │   │   │   │   │   ├──app.ts        * application main component source
- │   │   │   │   │   │   ├──app.css       * simple css file for component styles
- │   │   │   │   │   │   └──app.html      * simple html file for component template
- │   │   │   │   │   │
- │   │   │   │   │   ├──home/             * where the main landing component lives
- │   │   │   │   │   │   ├──home.ts       * main landing component source
- │   │   │   │   │   │   ├──home.css      * simple css file for component styles
- │   │   │   |   │   │   └──home.html     * simple html file for component template
- │   │   │   │   │   │
- │   │   │   │   │   ├──login/            * where the login component lives
- │   │   │   │   │   │   ├──login.ts      * how you would require your template and style files
- │   │   │   │   │   │   ├──login.css     * simple css file for component styles
- │   │   │   │   │   │   └──login.html    * simple html file for component template
- │   │   │   │   │   │
- │   │   │   │   │   ├──dashboard.ts      * dashboard component (sample)
- │   │   │   │   │   └──run.ts            * run edit component using a service and forms (sample)
- │   │   │   │   │
- │   │   │   │   ├──directives/           * where application directives live
- │   │   │   │   │   ├──Autofocus.ts      * simple directive to set focus to the first control in the view
- │   │   │   │   │   ├──LoggedInOutlet.ts * directive to enforce login when accessing non public views
- │   │   │   │   │   ├──XLarge.ts         * simple directive to set text to a larger size
- │   │   │   │   │   └──directives.ts     * a simple way to include all directives
- │   │   │   │   │
- │   │   │   │   ├──services/             * where application services live
- │   │   │   │   │   ├──RunService.ts     * a service to add runs (sample) 
- │   │   │   │   │   ├──Store.ts          * base service class to manage in-memory list (sample)
- │   │   │   │   │   └──services.ts       * a simple way to include all injectable services
- │   │   │   │   |   
- │   │   │   │   └──bootstrap.ts          * bootstraps the application component
- │   │   │   |
- |   │   │   ├──common/                   *  
- │   │   │   │   ├──BrowserDomAdapter.ts  * 
- │   │   │   │   ├──fetch.ts              * 
- │   │   │   │   ├──formInjectables       * 
- │   │   │   │   ├──jitInjectables        * 
- │   │   │   │   └──shadowDomInjectables  * 
- │   │   │   |
- │   │   │   └──public/                   * static content is served here
- │   │   │       ├──css/                  * where site wide css files live
- │   │   │       ├──img/                  * where site wide image files live
- │   │   │       ├──favicon.ico           * SPA site icon
- │   │   │       └──index.html            * Index.html: Main page for SPA
- │   │   │    
- │   │   ├──strings/                      *
- |   |   |   └──en-us/                    *
- |   |   |       └──error.strings         *
- │   │   │    
- |   |   ├──error.ts                      *
- │   │   └──strings.js                    * 
+ │   │   │   ├──directives/               * where application directives live
+ │   │   │   │   ├──Autofocus.ts          * simple directive to set focus to the first control in the view
+ │   │   │   │   ├──LoggedInOutlet.ts     * directive to enforce login when accessing non public views
+ │   │   │   │   ├──XLarge.ts             * simple directive to set text to a larger size
+ │   │   │   │   └──directives.ts         * a simple way to include all directives
+ │   │   │   │
+ │   │   │   ├──services/                 * where application services live
+ │   │   │   │   ├──RunService.ts         * a service to add runs (sample) 
+ │   │   │   │   ├──Store.ts              * base service class to manage in-memory list (sample)
+ │   │   │   │   └──services.ts           * a simple way to include all injectable services
+ │   │   │   |   
+ │   │   │   └──bootstrap.ts              * bootstraps the application component
+ │   │   |
+ │   │   ├──common/                       *  
+ │   │   │   ├──BrowserDomAdapter.ts      * 
+ │   │   │   ├──fetch.ts                  * 
+ │   │   │   ├──formInjectables           * 
+ │   │   │   ├──jitInjectables            * 
+ │   │   │   └──shadowDomInjectables      * 
+ │   │   |
+ │   │   └──public/                       * static content is served here
+ │   │       ├──css/                      * where site wide css files live
+ │   │       ├──img/                      * where site wide image files live
+ │   │       ├──favicon.ico               * SPA site icon
+ │   │       └──index.html                * Index.html: Main page for SPA
+ │   │    
+ │   ├──strings/                          *
+ |   |   └──en-us/                        *
+ |   |       └──error.strings             *
+ │   │    
+ |   ├──error.ts                          *
+ │   └──strings.js                        * 
  │
  ├──typings/                              * where typescript type definitions live
  │   ├──angular2/
