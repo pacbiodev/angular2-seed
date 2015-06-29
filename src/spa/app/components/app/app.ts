@@ -34,7 +34,8 @@ let template = require('./app.html');
   `
 })
 @RouteConfig([
-  { path: '/',as: 'home', component: Home },
+  { path: '/', as: 'root', component: Home },
+  { path: '/home', as: 'home', component: Home },
   { path: '/dashboard', as: 'dashboard', component: Dashboard },
   { path: '/run', as: 'run', component: Run }
 ])

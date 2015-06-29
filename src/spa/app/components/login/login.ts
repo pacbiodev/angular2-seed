@@ -28,26 +28,25 @@ export class Login {
 
   login(event, username, password) {
     event.preventDefault();
-    window.fetch('http://localhost:3001/sessions/create', {
+    window.fetch('http://localhost:8088/api/auth/login/with/%s/and/%s'.sprintf(username, password), {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        username, password
-      })
+      body: ''
     })
     .then(status)
     .then(json)
     .then((response) => {
-      localStorage.setItem('jwt', response.id_token);
-      this.router.parent.navigate('/home');
-    })
+            localStorage.setItem('token', response.token);
+            localStorage.setItem('user', JSON.stringify(response.user));
+            this.router.parent.navigate('/home');
+          })
     .catch((error) => {
-      alert(error.message);
-      console.log(error.message);
-    });
+             alert(error.message);
+             console.log(error.message);
+           });
   }
 
   signup(event) {

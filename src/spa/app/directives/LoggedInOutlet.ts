@@ -25,7 +25,7 @@ export class LoggedInOutlet extends RouterOutlet {
     var url = this._parentRouter
                   .lastNavigationAttempt;
     if ((!this.unless[url]) &&
-       (!localStorage.getItem('jwt'))) {
+       (!localStorage.getItem('token'))) {
       instruction.component = Login;
     }
     super.activate(instruction);

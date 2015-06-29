@@ -1,22 +1,24 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
-import {debug, error, info, log, warn} from 'winston';
-
-var config = require('../../webpack.config');
+var webpackConfig = require('../../webpack.config');
 var Express = require('express');
 var Webpack = require('webpack');
 var WebPackServer = require('webpack-dev-server');
 
-import {Request, Response, static as ServeStatic} from 'express';
+import {debug, error, info, log, warn} from 'winston';
 import {join as joinPaths, resolve as resolvePaths} from 'path';
+
+var config = global['config'] = require('Konfig')({ path: resolvePaths(__dirname, '../config') });
+
+import {Request, Response, static as ServeStatic} from 'express';
 
 // Express App
 var app = Express();
-var appPort = 8080;
+var appPort = config.spa.port;
 
 console.log('NODE_ENV: %s', process.env.NODE_ENV);
 
-var server = new WebPackServer(Webpack(config),
+var server = new WebPackServer(Webpack(webpackConfig),
                                {
                                  path: '/spa/public/bin',
                                  contentBase: '../spa/public',
