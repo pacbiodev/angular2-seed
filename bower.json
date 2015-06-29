@@ -28,7 +28,7 @@
                     "system-bower": "~0.2.2",
                     "fetch": "~0.9.0", 
                     "traceur-runtime": "~0.0.90",
-                    "jwt-decode": "~1.1.1"
+                    "jsonfn-bower":"0.6.2"
                   },
   "private": true
 }

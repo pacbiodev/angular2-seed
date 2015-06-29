@@ -1,11 +1,14 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
+import {debug, error, info, log, warn} from 'winston';
+
+var config = require('../../webpack.config');
+var Express = require('express');
 var Webpack = require('webpack');
 var WebPackServer = require('webpack-dev-server');
-var config = require('../../webpack.config');
 
-var Express = require('express');
-var Path = require('path');
+import {Request, Response, static as ServeStatic} from 'express';
+import {join as joinPaths, resolve as resolvePaths} from 'path';
 
 // Express App
 var app = Express();
@@ -27,11 +30,11 @@ server.app
       .use(app);
 
 // Your middleware
-app.use(Express.static(Path.resolve(__dirname, '../spa/public')));
+app.use(ServeStatic(resolvePaths(__dirname, '../spa/public')));
 
-app.use((req, res) => {
+app.use((req: Request, res: Response) => {
           // Use response.sendfile, as it streams instead of reading the file into memory.
-          res.sendFile(Path.resolve(__dirname, '../spa/public/index.html'));
+          res.sendFile(resolvePaths(__dirname, '../spa/public/index.html'));
         });
 
 server.listen(appPort,

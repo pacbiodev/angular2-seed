@@ -1,8 +1,8 @@
 /// <reference path="../typings/pacbio/pacbio.d.ts" />
 /// <reference path="../typings/fs-extra/fs-extra.d.ts" />
 
-import fs = require('fs-extra');
-import path = require('path');
+import {readFileSync} from 'fs-extra';
+import {join, resolve} from 'path';
 
 // Include these files
 require('./extensions/includes/object.js');
@@ -18,8 +18,8 @@ export class Strings implements IStringMap {
   private __filename__:string;
   constructor(private __category__:string) {
     // Load list from strings file
-    this.__filename__ = path.resolve(__dirname, './strings/en-us/%s.strings'.sprintf(__category__));
-    var strings = fs.readFileSync(this.__filename__, "utf8");
+    this.__filename__ = resolve(__dirname, './strings/en-us/%s.strings'.sprintf(__category__));
+    var strings = readFileSync(this.__filename__, "utf8");
     var list = JSON.parse(strings);
 
     for (var key in list) {

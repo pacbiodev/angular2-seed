@@ -1,34 +1,45 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
-import Debug = require('winston');
-import Express = require('express');
-import Http = require('http');
-import Path = require('path');
+import {debug, error, info, log, warn} from 'winston';
+import {join as joinPaths, resolve as resolvePaths} from 'path';
+
+var config = global['config'] = require('Konfig')({ path: resolvePaths(__dirname, '../config') });
+
+import {connect} from 'mongoose';
+import {RequestHandler, Request, Response} from 'express';
+import {middleware as jwt} from '../api/common/jwt';
 
 var BodyParser = require('body-parser');
 var CookieParser = require('cookie-parser');
-var MethodOverride = require('method-override');
+var Express = require('express');
+var ExpressValidator = require('express-validator');
 var FavIcon = require('serve-favicon');
+var MethodOverride = require('method-override');
+
+import {HttpHeaders} from '../extensions/extensions';
 
 // Load Strings
-import Strings = require('../Strings');
+import {errors, messages} from '../Strings';
 
 // Express App
 var app = Express();
-var appPort = 8081;
+var appPort = config.app.port;
 
-Debug.info('NODE_ENV: %s', process.env.NODE_ENV);
+info('NODE_ENV: %s', process.env.NODE_ENV);
+
+connect('mongodb://localhost/pacbio');
 
 app.use(CookieParser());
 app.use(BodyParser.json());
+app.use(<RequestHandler> ExpressValidator());
 app.use(MethodOverride('X-HTTP-Method-Override'));
 
 // view engine setup
-app.set('views', Path.resolve(__dirname, '../api/views'));
+app.set('views', resolvePaths(__dirname, '../api/views'));
 app.set('view engine', 'hbs');
 
 app.all('/*',
-        (req, res, next) => {
+        (req: Request, res: Response, next: Function) => {
           res.header('Access-Control-Allow-Origin', '*');
           res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Auth-Token');
           res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
@@ -36,29 +47,36 @@ app.all('/*',
           app.disable('etag');
 
           // Set full request URL
-          req.headers['requestedUrl'] = '%s://%s%s'.sprintf(req.protocol,
-                                                            req.get('host'),
-                                                            req.originalUrl);
+          (<HttpHeaders> req.headers).requestedUrl = '%s://%s%s'.sprintf(req.protocol,
+                                                                         req.get('host'),
+                                                                         req.originalUrl);
 
           next();
         });
 
 // API Documentation
 app.get('/api',
-        (req, res, next) => {
+        (req: Request, res: Response, next: Function) => {
           res.status(200)
              .render('api',
-                     { title: Strings.messages['default-page-title'] });
+                     { title: messages['default-page-title'] });
 
         });
 
-app.use(FavIcon(Path.resolve(__dirname, '../api/img/favicon.png')));
-app.use(Express.static(Path.resolve(__dirname, '../api')));
+app.use(FavIcon(resolvePaths(__dirname, '../api/img/favicon.png')));
+app.use(Express.static(resolvePaths(__dirname, '../api')));
+
+app.use(jwt().unless({ path: [ /^\/$/,
+                               /^\/api\/auth\/login/,
+                               /\/api\/{0,1}$/ ] }));
+
+app.use('/api/auth', <RequestHandler> require('../api/routes/auth'));
+app.use('/api/user', <RequestHandler> require('../api/routes/user'));
 
 // Root will redirect to the API page. All other request to paths not
 // listed in the unless middleware handler for JWT will receive a 401
 // error.
-app.use((req, res) => {
+app.use((req: Request, res: Response) => {
           return res.redirect('/api');
         });
 

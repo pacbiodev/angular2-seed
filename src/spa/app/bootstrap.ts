@@ -21,6 +21,9 @@ import {appServicesInjectables} from './services/services';
 // Our top level component that holds all of our components
 import {App} from './components/app/app';
 
+require('../../extensions/includes/object.js');
+require('../../extensions/includes/string.js');
+
 /*
   Bootstrap our Angular app with our top level component `App`
   and inject our global services/bindings into Angular's dependency injection

@@ -39,8 +39,11 @@ dist/**
 angular2
 es6-promise
 express
+express-validator
 fs-extra
+jsonwebtoken
 mime
+mongoose
 node
 rx
 serve-static

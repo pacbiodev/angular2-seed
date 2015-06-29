@@ -67,8 +67,7 @@ var paths = {
                        lib: [
                               './bower_components/bootstrap/dist/css/bootstrap.css',
                               './bower_components/traceur-runtime/traceur-runtime.js',
-                              './bower_components/fetch/fetch.js',
-                              './bower_components/jwt-decode/build/jwt-decode.js'
+                              './bower_components/fetch/fetch.js'
                             ],
                        app: [
                               './src/spa/**/*'
@@ -156,6 +155,25 @@ gulp.task('server:ts',
                        .pipe(sourcemaps.write('.',
                                               { sourceRoot: paths.src.root }))
                        .pipe(gulp.dest(paths.dist.server));
+          });
+
+gulp.task('server:watch',
+          [],
+          () => {
+            watch(paths.src.server.ts,
+              () => {
+                gulp.start('server:ts');
+              });
+
+            watch(paths.src.server.js,
+              () => {
+                gulp.start('server:js');
+              });
+
+            watch(paths.src.server.files,
+              () => {
+                gulp.start('server:files');
+              });
           });
 
 gulp.task('spa:clean',
@@ -295,7 +313,7 @@ gulp.task('spa:node',
           });
 
 gulp.task('api',
-          ['server:js', 'server:ts', 'server:files', 'server:watch-dev']);
+          ['server', 'server:watch-dev']);
 
 gulp.task('api:node-dev',
           () => {
@@ -340,13 +358,6 @@ gulp.task('api:node',
 
 // The development server (the recommended option for development)
 gulp.task('default', ['server', 'spa']);
-
-/*
-process.on('SIGINT',
-           () => {
-             process.exit();
-           });
- */
 
 process.on('exit',
            (code) => {
