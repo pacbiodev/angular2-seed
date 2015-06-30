@@ -80,6 +80,26 @@ app.use((req: Request, res: Response) => {
           return res.redirect('/api');
         });
 
+// Catch All Error Handler
+// @TODO add support to redirect to correct error pages when running in PROD or TEST
+app.use(<ErrorRequestHandler> (err, req, res, next) => {
+                               var context = {
+                                               status: err.status || 500,
+                                               name: err.name || err.code || errors['unknown-name'],
+                                               message: err.message || errors['unknown-message'],
+                                               error: err.stack || String.EMPTY
+                                             };
+
+                               res.status(context.status)
+                                 .render('error/dev-error',
+                                         {
+                                           title: errors['error-title'].sprintf(context.status, context.name),
+                                           class: 'error-body',
+                                           context: context,
+                                           showDetails: true
+                                         });
+                             });
+
 app.listen(appPort,
            function () {
              var addr = parseBindInfo(this);

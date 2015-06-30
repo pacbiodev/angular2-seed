@@ -12,6 +12,9 @@ var config = global['config'] = require('Konfig')({ path: resolvePaths(__dirname
 
 import {Request, Response, static as ServeStatic} from 'express';
 
+// Load Strings
+import {errors, messages} from '../Strings';
+
 // Express App
 var app = Express();
 var appPort = config.spa.port;
@@ -38,6 +41,26 @@ app.use((req: Request, res: Response) => {
           // Use response.sendfile, as it streams instead of reading the file into memory.
           res.sendFile(resolvePaths(__dirname, '../spa/public/index.html'));
         });
+
+// Catch All Error Handler
+// @TODO add support to redirect to correct error pages when running in PROD or TEST
+app.use(<ErrorRequestHandler> (err, req, res, next) => {
+                               var context = {
+                                               status: err.status || 500,
+                                               name: err.name || err.code || errors['unknown-name'],
+                                               message: err.message || errors['unknown-message'],
+                                               error: err.stack || String.EMPTY
+                                             };
+
+                               res.status(context.status)
+                                  .render('error/dev-error',
+                                          {
+                                           title: errors['error-title'].sprintf(context.status, context.name),
+                                           class: 'error-body',
+                                           context: context,
+                                           showDetails: true
+                                          });
+                             });
 
 server.listen(appPort,
               function(server) {
