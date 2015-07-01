@@ -1,3 +1,5 @@
+declare type int = number;
+
 declare var zone: any;
 declare var Zone: any;
 
@@ -66,21 +68,37 @@ declare module "angular2/forms" {
   class FormBuilder {
     group(controls: any): any;
   }
+
   class Control {
     constructor(controls: any);
+    updateValidity(): void;
+    updateValueAndValidity(value: any): void;
     updateValue(value: any);
-    _valueChanges: any
-    valueChanges: any
+    _valueChanges: any;
+    valueChanges: any;
+    errors: any;
+    pristine: boolean;
+    touched: boolean;
+    valid: boolean;
   }
+
   class ControlArray {
     removeAt(index: any);
     push(item: any);
   }
+
   class ControlGroup {
     constructor(controls: any);
+    updateValidity(): void;
+    updateValueAndValidity(value: any): void;
     controls: any;
     valueChanges: any;
+    errors: any;
+    pristine: boolean;
+    touched: boolean;
+    valid: boolean;
   }
+
   class Validators {
     static required: any;
   }
@@ -119,6 +137,46 @@ declare module "angular2/src/router/browser_location" {
 declare module "angular2/src/router/location" {
   class Location {
     normalize(url: string): string;
+  }
+}
+
+declare module "angular2/src/facade/collection" {
+  interface List<T> {
+  }
+
+  class ListWrapper {
+    static create(): List<any>;
+    static createFixedSize(size: any): List<any>;
+    static get(m: any, k: any): any;
+    static set(m: any, k: any, v: any): void;
+    static clone(array: List<any>): any[];
+    static map(array: any, fn: any): any;
+    static forEach(array: List<any>, fn: Function): void;
+    static push(array: any, el: any): void;
+    static first(array: any): any;
+    static last(array: any): any;
+    static find(list: List<any>, pred: Function): any;
+    static indexOf(array: List<any>, value: any, startIndex?: number): number;
+    static reduce<T, E>(list: List<T>, fn: (accumValue: E, currentValue: T, currentIndex: number, array: T[]) => E, init: E): E;
+    static filter(array: any, pred: Function): any;
+    static any(list: List<any>, pred: Function): boolean;
+    static contains(list: List<any>, el: any): boolean;
+    static reversed(array: any): any[];
+    static concat(a: any, b: any): any;
+    static isList(list: any): boolean;
+    static insert(list: any, index: int, value: any): void;
+    static removeAt(list: any, index: int): any;
+    static removeAll(list: any, items: any): void;
+    static removeLast<T>(list: List<T>): T;
+    static remove(list: any, el: any): boolean;
+    static clear(list: any): void;
+    static join(list: any, s: any): any;
+    static isEmpty(list: any): boolean;
+    static fill(list: List<any>, value: any, start?: int, end?: int): void;
+    static equals(a: List<any>, b: List<any>): boolean;
+    static slice<T>(l: List<T>, from?: int, to?: int): List<T>;
+    static splice<T>(l: List<T>, from: int, length: int): List<T>;
+    static sort<T>(l: List<T>, compareFn?: (a: T, b: T) => number): void;
   }
 }
 

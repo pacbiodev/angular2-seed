@@ -14,9 +14,9 @@ export class LoggedInOutlet extends RouterOutlet {
               _injector: Injector,
               @Attribute('name') nameAttr: string) {
                 this.unless = {
-                  '/login': true,
-                  '/signup': true
-                };
+                                '/login': true,
+                                '/signup': true
+                              };
 
                 super(elementRef, _loader, _parentRouter, _injector, nameAttr);
               }
@@ -25,7 +25,7 @@ export class LoggedInOutlet extends RouterOutlet {
     var url = this._parentRouter
                   .lastNavigationAttempt;
     if ((!this.unless[url]) &&
-       (!localStorage.getItem('token'))) {
+        (!localStorage.getItem('token'))) {
       instruction.component = Login;
     }
     super.activate(instruction);

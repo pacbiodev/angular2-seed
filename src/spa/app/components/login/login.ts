@@ -1,6 +1,6 @@
 /// <reference path="../../../../../typings/tsd.d.ts" />
 
-import {Component, View} from 'angular2/angular2';
+import {Component, View, EventEmitter} from 'angular2/angular2';
 import {status, json} from '../../../common/fetch'
 import {Router, RouterLink} from 'angular2/router';
 
@@ -10,7 +10,7 @@ let template = require('./login.html');
 
 
 @Component({
-  selector: 'login'
+  selector: 'login',
 })
 @View({
   template:

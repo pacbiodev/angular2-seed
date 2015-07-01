@@ -10,7 +10,7 @@ import {RunService} from '../services/RunService';
 
 // Simple component
 @Component({
-  selector: 'todo'
+  selector: 'run'
 })
     // <fieldset ng-control-group="runs">
     // </fieldset>
@@ -24,23 +24,20 @@ import {RunService} from '../services/RunService';
     }
   </style>
 
-  <form [ng-form-model]="runForm" (submit)="runForm.valid && addRun($event, runForm.value.run)"
-  novalidate>
-
-    <input type="text" [ng-form-control]="runInput" autofocus required>
-
+  <form [ng-form-model]="runForm"
+        (submit)="runForm.valid &&
+                  addRun($event, runForm.value.run)"
+        novalidate>
+    <input type="text"
+           [ng-form-control]="runInput"
+           autofocus
+           required>
     <button>Add Run</button>
-
-    <span class="error-message" *ng-if="
-      runForm.errors?.required &&
-      runForm.dirty &&
-      runForm.controls.run.touched
-    ">
+    <span class="error-message"
+          *ng-if="!runForm.valid && !isRunValid()">
       Run is required
     </span>
-
   </form>
-
   <ul>
     <li *ng-for="var run of runService.state.runs; var $index = index">
       <p>
@@ -56,31 +53,43 @@ import {RunService} from '../services/RunService';
 export class Run {
   runForm: ControlGroup;
   runInput: Control;
+
   state: any;
-  constructor(
-    public formBuilder: FormBuilder,
-    public runService: RunService
-  ) {
-
+  constructor(public formBuilder: FormBuilder,
+              public runService: RunService) {
     this.runForm = formBuilder.group({
-      'run': ['', Validators.required]
-    })
-    this.runInput = this.runForm.controls.run
+                                       'run': ['', Validators.required]
+                                     });
+    this.runInput = this.runForm.controls.run;
+  }
 
+  isRunValid() {
+    if (Object.isNullOrUndefined(this.runInput.errors))
+      return true;
+
+    if (Object.isNullOrUndefined(this.runInput.errors.required))
+      return true;
+
+    return (!this.runInput.touched || this.runForm.valid);
   }
 
   addRun(event, run) {
     event.preventDefault(); // prevent native page refresh
 
     this.runService.add(run);
+
     // update the view/model
     this.runInput.updateValue('');
+
+    // HACK to clear error state
+    delete this.runInput.errors['required'];
+    this.runForm.updateValidity();
   }
 
   removeTodo(event, index) {
     event.preventDefault(); // prevent native page refresh
 
-    this.runService.remove(index);
+    this.runService
+        .remove(index);
   }
-
 }

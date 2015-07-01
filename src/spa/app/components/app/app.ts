@@ -11,6 +11,8 @@ import {Home} from '../home/home';
 import {Dashboard} from '../dashboard';
 // A simple example of a Component using a Service
 import {Run} from '../run';
+// A simple example of a Component using a Service
+import {ToDo} from '../todo/todo';
 
 // Import all of our custom app directives
 import {appDirectives} from '../../directives/directives';
@@ -37,7 +39,8 @@ let template = require('./app.html');
   { path: '/', as: 'root', component: Home },
   { path: '/home', as: 'home', component: Home },
   { path: '/dashboard', as: 'dashboard', component: Dashboard },
-  { path: '/run', as: 'run', component: Run }
+  { path: '/run', as: 'run', component: Run },
+  { path: '/todo', as: 'todo', component: ToDo }
 ])
 export class App {
   name: string;
