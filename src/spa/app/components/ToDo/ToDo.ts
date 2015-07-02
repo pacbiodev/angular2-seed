@@ -1,7 +1,8 @@
 /// <reference path="../../../../../typings/tsd.d.ts" />
 
-import {NgFor, Component, View} from 'angular2/angular2';
-import {ToDoService, ToDo as ToDoItem, ToDoFactory} from '../../services/ToDoService';
+import {NgFor, Component, View, ElementRef} from 'angular2/angular2';
+import {appDirectives} from '../../directives/directives';
+import {ToDoService, ToDo as ToDoItem, ToDoFactory, FilterByTypes} from '../../services/ToDoService';
 
 let styles   = require('./todo.css');
 let template = require('./todo.html');
@@ -16,11 +17,17 @@ let template = require('./todo.html');
     </style>
     ${template}
   `,
-  directives: [NgFor]})
+  directives: [NgFor, appDirectives]})
 export class ToDo {
+  filterBy: FilterByTypes = FilterByTypes.all;
+  filterAllCss = { 'selected': false };
+  filterActiveCss = { 'selected': false };
+  filterCompletedCss = { 'selected': false };
+
   toDoEdit: ToDoItem = null;
 
-  constructor(public toDoService: ToDoService, public factory: ToDoFactory) {}
+  constructor(private _elem: ElementRef, public toDoService: ToDoService, public factory: ToDoFactory) {
+  }
 
   enterToDo(inputElement): void {
     this.addToDo(inputElement.value);
@@ -65,7 +72,28 @@ export class ToDo {
   }
 
   clearCompleted(): void {
+    event.preventDefault();
     this.toDoService
         .removeBy((todo) => todo.completed);
+  }
+
+  applyFilter(event, filterBy: string): void {
+    event.preventDefault();
+
+    this.filterBy = FilterByTypes[filterBy];
+
+    if (typeof this.filterBy === 'undefined')
+      this.filterBy = FilterByTypes.all;
+
+    let filterAll = this._elem.domElement.shadowRoot.getElementById('filter-all');
+    let filterActive = this._elem.domElement.shadowRoot.getElementById('filter-active');
+    let filterCompleted = this._elem.domElement.shadowRoot.getElementById('filter-completed');
+
+    // Hack: CSSClass not working
+    filterAll.classList[(this.filterBy == FilterByTypes.all) ? 'add' : 'remove']('selected');
+    filterActive.classList[(this.filterBy == FilterByTypes.active) ? 'add' : 'remove']('selected');
+    filterCompleted.classList[(this.filterBy == FilterByTypes.completed) ? 'add' : 'remove']('selected');
+
+    this.toDoService.filter(this.filterBy);
   }
 }

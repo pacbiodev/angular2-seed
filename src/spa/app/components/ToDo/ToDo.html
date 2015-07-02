@@ -16,7 +16,7 @@
         <ul id="todo-list">
             <li *ng-for="#todo of toDoService.list">
                 <div class="view"
-                     [class.hidden]="todoEdit == todo">
+                     [class.hidden]="toDoEdit == todo">
                     <input class="toggle" type="checkbox"
                            (click)="completeMe(todo)"
                            [checked]="todo.completed">
@@ -39,16 +39,16 @@
         <div [class.hidden]="true"></div>
         <ul id="filters">
             <li>
-                <a href="#" class="selected">All</a>
+                <a class="selected" id="filter-all" (click)="applyFilter($event, 'all')">All</a>
             </li>
             <li>
-                <a href="#/active">Active</a>
+                <a id="filter-active" (click)="applyFilter($event, 'active')">Active</a>
             </li>
             <li>
-                <a href="#/completed">Completed</a>
+                <a id="filter-completed" (click)="applyFilter($event, 'completed')">Completed</a>
             </li>
         </ul>
-        <button id="clear-completed" (click)="clearCompleted()">Clear completed</button>
+        <button id="clear-completed" (click)="clearCompleted($event)">Clear completed</button>
     </footer>
 
 </section>

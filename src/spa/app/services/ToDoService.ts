@@ -24,33 +24,52 @@ export class ToDoFactory {
   }
 }
 
+export enum FilterByTypes {
+  all,
+  active,
+  completed
+}
+
 // Store manages any generic item that inherits from KeyModel
 export class ToDoService {
-  list: List<KeyModel> = [];
+  private _lastFilterBy: FilterByTypes = FilterByTypes.all;
+  private _list: List<KeyModel> = [];
+  list: List<KeyModel> = <List<KeyModel>> ListWrapper.create();
+
+  filter(filterBy: FilterByTypes): void {
+    this._lastFilterBy = filterBy;
+    this.list = ListWrapper.filter(this._list,
+                                   (item) => (filterBy == FilterByTypes.all) ||
+                                              ((filterBy == FilterByTypes.active) && (!item.completed)) ||
+                                              ((filterBy == FilterByTypes.completed) && (item.completed)));
+  }
 
   add(record: KeyModel): void {
-    this.list.push(record);
+    this._list.push(record);
+    this.filter(this._lastFilterBy);
   }
 
   remove(record: KeyModel): void {
     this._spliceOut(record);
+    this.filter(this._lastFilterBy);
   }
 
   removeBy(callback: Function): void {
-    var records = ListWrapper.filter(this.list, callback);
-    ListWrapper.removeAll(this.list, records);
+    var records = ListWrapper.filter(this._list, callback);
+    ListWrapper.removeAll(this._list, records);
+    this.filter(this._lastFilterBy);
   }
 
   private _spliceOut(record: KeyModel) {
     var i = this._indexFor(record);
     if (i > -1) {
-      return ListWrapper.splice(this.list, i, 1)[0];
+      return ListWrapper.splice(this._list, i, 1)[0];
     }
     return null;
   }
 
   private _indexFor(record: KeyModel) {
-    return this.list.indexOf(record);
+    return this._list.indexOf(record);
   }
 }
 
