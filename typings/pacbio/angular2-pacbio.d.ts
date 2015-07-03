@@ -4,10 +4,20 @@ declare var zone: any;
 declare var Zone: any;
 
 declare module "angular2/change_detection" {
-  class Pipe {}
+  class ChangeDetectorRef {}
+  class Pipe {
+    supports(obj: any): boolean;
+    onDestroy(): void;
+    transform(value: any): any;
+  }
+  class PipeFactory {
+    supports(obs: any): boolean;
+    create(cdRef: any): Pipe;
+  }
   class NullPipeFactory {}
   class PipeRegistry {
     constructor(pipes: any);
+    get(type: string, obj: any, cdRef: ChangeDetectorRef): Pipe;
   }
   class JitChangeDetection {}
   class ChangeDetection {}
@@ -15,6 +25,128 @@ declare module "angular2/change_detection" {
   var defaultPipes: any;
 }
 
+declare module "angular2/pipes" {
+  class PipeFactory { }
+  class Pipe { }
+
+  class CollectionChangeRecord {
+    currentIndex: int;
+    previousIndex: int;
+    item: any;
+    _nextPrevious: CollectionChangeRecord;
+    _prev: CollectionChangeRecord;
+    _next: CollectionChangeRecord;
+    _prevDup: CollectionChangeRecord;
+    _nextDup: CollectionChangeRecord;
+    _prevRemoved: CollectionChangeRecord;
+    _nextRemoved: CollectionChangeRecord;
+    _nextAdded: CollectionChangeRecord;
+    _nextMoved: CollectionChangeRecord;
+    constructor(item: any);
+    toString(): string;
+  }
+
+  class KeyValueChangesFactory extends PipeFactory {
+    constructor();
+    supports(obj: any): boolean;
+    create(cdRef: any): Pipe;
+  }
+
+  class KeyValueChanges extends Pipe {
+    private _records;
+    private _mapHead;
+    private _previousMapHead;
+    private _changesHead;
+    private _changesTail;
+    private _additionsHead;
+    private _additionsTail;
+    private _removalsHead;
+    private _removalsTail;
+    constructor();
+    static supportsObj(obj: any): boolean;
+    supports(obj: any): boolean;
+    transform(map: any): any;
+    isDirty: boolean;
+    forEachItem(fn: Function): void;
+    forEachPreviousItem(fn: Function): void;
+    forEachChangedItem(fn: Function): void;
+    forEachAddedItem(fn: Function): void;
+    forEachRemovedItem(fn: Function): void;
+    check(map: any): boolean;
+    _reset(): void;
+    _truncate(lastRecord: KVChangeRecord, record: KVChangeRecord): void;
+    _isInRemovals(record: KVChangeRecord): boolean;
+    _addToRemovals(record: KVChangeRecord): void;
+    _removeFromSeq(prev: KVChangeRecord, record: KVChangeRecord): void;
+    _removeFromRemovals(record: KVChangeRecord): void;
+    _addToAdditions(record: KVChangeRecord): void;
+    _addToChanges(record: KVChangeRecord): void;
+    toString(): string;
+    _forEach(obj: any, fn: Function): void;
+  }
+
+  class KVChangeRecord {
+    key: any;
+    previousValue: any;
+    currentValue: any;
+    _nextPrevious: KVChangeRecord;
+    _next: KVChangeRecord;
+    _nextAdded: KVChangeRecord;
+    _nextRemoved: KVChangeRecord;
+    _prevRemoved: KVChangeRecord;
+    _nextChanged: KVChangeRecord;
+    constructor(key: any);
+    toString(): string;
+  }
+
+  class IterableChangesFactory extends PipeFactory {
+    constructor();
+    supports(obj: any): boolean;
+    create(cdRef: any): Pipe;
+  }
+
+  class IterableChanges extends Pipe {
+    private _collection;
+    private _length;
+    private _linkedRecords;
+    private _unlinkedRecords;
+    private _previousItHead;
+    private _itHead;
+    private _itTail;
+    private _additionsHead;
+    private _additionsTail;
+    private _movesHead;
+    private _movesTail;
+    private _removalsHead;
+    private _removalsTail;
+    constructor();
+    static supportsObj(obj: any): boolean;
+    supports(obj: any): boolean;
+    collection: any;
+    length: int;
+    forEachItem(fn: Function): void;
+    forEachPreviousItem(fn: Function): void;
+    forEachAddedItem(fn: Function): void;
+    forEachMovedItem(fn: Function): void;
+    forEachRemovedItem(fn: Function): void;
+    transform(collection: any): any;
+    check(collection: any): boolean;
+    isDirty: boolean;
+    _reset(): void;
+    _mismatch(record: CollectionChangeRecord, item: any, index: int): CollectionChangeRecord;
+    _verifyReinsertion(record: CollectionChangeRecord, item: any, index: int): CollectionChangeRecord;
+    _truncate(record: CollectionChangeRecord): void;
+    _reinsertAfter(record: CollectionChangeRecord, prevRecord: CollectionChangeRecord, index: int): CollectionChangeRecord;
+    _moveAfter(record: CollectionChangeRecord, prevRecord: CollectionChangeRecord, index: int): CollectionChangeRecord;
+    _addAfter(record: CollectionChangeRecord, prevRecord: CollectionChangeRecord, index: int): CollectionChangeRecord;
+    _insertAfter(record: CollectionChangeRecord, prevRecord: CollectionChangeRecord, index: int): CollectionChangeRecord;
+    _remove(record: CollectionChangeRecord): CollectionChangeRecord;
+    _unlink(record: CollectionChangeRecord): CollectionChangeRecord;
+    _addToMoves(record: CollectionChangeRecord, toIndex: int): CollectionChangeRecord;
+    _addToRemovals(record: CollectionChangeRecord): CollectionChangeRecord;
+    toString(): string;
+  }
+}
 
 declare module "angular2/src/core/zone/ng_zone" {
   class NgZone {
@@ -24,6 +156,30 @@ declare module "angular2/src/core/zone/ng_zone" {
 
 declare module 'angular2/src/services/url_resolver' {
   class UrlResolver {}
+}
+
+declare module "angular2/src/facade/lang" {
+  function isPresent(obj: any): boolean;
+  function isBlank(obj: any): boolean;
+  function isString(obj: any): boolean;
+  function isFunction(obj: any): boolean;
+  function isType(obj: any): boolean;
+  function stringify(token: any): string;
+
+  class StringWrapper {
+    static fromCharCode(code: int): string;
+    static charCodeAt(s: string, index: int): number;
+    static split(s: string, regExp: any): string[];
+    static equals(s: string, s2: string): boolean;
+    static replace(s: string, from: string, replace: string): string;
+    static replaceAll(s: string, from: RegExp, replace: string): string;
+    static toUpperCase(s: string): string;
+    static toLowerCase(s: string): string;
+    static startsWith(s: string, start: string): boolean;
+    static substring(s: string, start: int, end?: int): string;
+    static replaceAllMapped(s: string, from: RegExp, cb: Function): string;
+    static contains(s: string, substr: string): boolean;
+  }
 }
 
 declare module "angular2/src/facade/async" {
@@ -105,15 +261,34 @@ declare module "angular2/forms" {
 }
 
 declare module "angular2/render" {
+  interface List<T> { }
+  class RenderViewRef {}
+
+  class RenderElementRef {
+    renderView: RenderViewRef;
+    boundElementIndex: number;
+  }
+
+  class Renderer {
+    setElementProperty(location: any, propertyName: string, propertyValue: any);
+    setElementAttribute(location: any, attributeName: string, attributeValue: string);
+    setElementClass(location: any, className: string, isAdd: boolean);
+    setElementStyle(location: any, styleName: string, styleValue: string);
+    invokeElementMethod(location: any, methodName: string, args: List<any>);
+  }
+
   class EmulatedScopedShadowDomStrategy {
     constructor(styleInliner: any, styleUrlResolver: any, styleHost: any);
   }
+
   class EmulatedUnscopedShadowDomStrategy {
     constructor(styleUrlResolver: any, styleHost: any);
   }
+
   class NativeShadowDomStrategy {
     constructor(styleUrlResolver: any);
   }
+
   class ShadowDomStrategy {}
 }
 
@@ -137,12 +312,19 @@ declare module "angular2/src/router/browser_location" {
 declare module "angular2/src/router/location" {
   class Location {
     normalize(url: string): string;
+    path(): string;
   }
 }
 
 declare module "angular2/src/facade/collection" {
   interface List<T> {
   }
+
+  interface StringMap<K, V> {
+  }
+
+  function isListLikeIterable(obj: any): boolean;
+  function iterateListLike(obj: any, fn: Function): void;
 
   class ListWrapper {
     static create(): List<any>;
@@ -177,6 +359,19 @@ declare module "angular2/src/facade/collection" {
     static slice<T>(l: List<T>, from?: int, to?: int): List<T>;
     static splice<T>(l: List<T>, from: int, length: int): List<T>;
     static sort<T>(l: List<T>, compareFn?: (a: T, b: T) => number): void;
+  }
+
+  class StringMapWrapper {
+    static create(): StringMap<any, any>;
+    static contains(map: StringMap<string, any>, key: string): boolean;
+    static get<V>(map: StringMap<string, V>, key: string): V;
+    static set<V>(map: StringMap<string, V>, key: string, value: V): void;
+    static keys(map: StringMap<string, any>): List<string>;
+    static isEmpty(map: StringMap<string, any>): boolean;
+    static delete(map: StringMap<string, any>, key: string): void;
+    static forEach<K, V>(map: StringMap<string, V>, callback: Function): void;
+    static merge<V>(m1: StringMap<string, V>, m2: StringMap<string, V>): StringMap<string, V>;
+    static equals<V>(m1: StringMap<string, V>, m2: StringMap<string, V>): boolean;
   }
 }
 
