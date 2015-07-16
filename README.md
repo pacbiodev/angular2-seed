@@ -1,3 +1,4 @@
+# Deprecated... Please use pacbio-seed
 This repo serves as an extremely minimal starter for PacBio client applications running with Angular 2 and TypeScript.
 * Best practice in file organization for Angular 2.
 * Hot build system using Webpack for working with TypeScript.
